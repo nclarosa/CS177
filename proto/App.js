@@ -6,6 +6,7 @@ import Legend from './legend';
 export default function App() {
 
     const [visible, setVis] = useState(false);
+    const [frequency, changeFreq] = useState('');
     const [relationship, changeRel] = useState('');
     const [name, changeName] = useState('');
     const [vdist, changeV] = useState(50);
@@ -17,20 +18,23 @@ export default function App() {
             left: 38,
             bottom: 10,
             rel: 'Main',
+            frequency: 'Weekly'
         },
         {
             id: 1,
             name: 'Dad',
             left: 20,
             bottom: 30,
-            rel: 'Family'
+            rel: 'Family',
+            frequency: 'Weekly'
         },
         {
             id: 2,
             name: 'James',
             left: 40,
             bottom: 60,
-            rel: 'Friend'
+            rel: 'Friend',
+            frequency: 'Bi-weekly'
         },
     ]);
 
@@ -86,6 +90,12 @@ export default function App() {
                 value={hdist}
                 onChangeText={changeH}
             />
+              <TextInput 
+                style={styles.input}
+                placeholder="reminder frequency"
+                onChangeText={changeFreq}
+                value={frequency}
+            />
           <TouchableOpacity onPress={()=>{
                 const radius = Math.sqrt(vdist**2 + hdist**2);
                 if(name === "Me"){
@@ -97,12 +107,14 @@ export default function App() {
             name: name,
             left: hdist,
             bottom: parseInt(vdist) + parseInt(radius),
-            rel: relationship
+            rel: relationship,
+            frequency: frequency
         }]);
                 updateCount(count + 1);
                 changeH("");
                 changeV("");
                 changeRel("");
+                changeFreq("");
                 changeName("");
                 setVis(!visible)}}>
                 <Text>save</Text>
@@ -112,6 +124,7 @@ export default function App() {
                 changeH("");
                 changeV("");
                 changeRel("");
+                changeFreq("");
                 changeName("");
                 setVis(!visible)}}>
                 <Text>cancel</Text>

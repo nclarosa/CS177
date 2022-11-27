@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Animated, View, Modal, StyleSheet, Text, TouchableOpacity, Easing} from 'react-native';
+import { Animated, View, Modal, StyleSheet, Text, TouchableOpacity, Easing, TextInput} from 'react-native';
 
 const Node = (props) => {
 
     const [visible, changeVis] = useState(false);
+    const [frequency, changeDisplayedFreq] = useState(props.offset.frequency);
     const left = props.offset.left;
     const bottom = props.offset.bottom;
     let color = 'cyan';
@@ -83,8 +84,23 @@ const Node = (props) => {
                 </View>
             </TouchableOpacity>
             <Modal visible={visible} animationType='slide' transparent='true'>
-                <View style={styles.modal}>
-                    <Text>hi</Text>
+                <View style={[styles.modal, {backgroundColor: color}] }>
+                    <Text> Orbit currently reminds you to reach out to {props.offset.name} {frequency}!</Text>
+                    <View>
+                    <Text> Type below to change the reminder frequency:</Text>
+                    <TextInput 
+                    style={styles.input}
+                    placeholder="daily, weekly, bi-weekly, or monthly"
+                    onChangeText={changeDisplayedFreq}
+                    value={frequency}
+                    />
+                    <TouchableOpacity onPress={() => props.offset.frequency = frequency}>
+                    <Text style={{backgroundColor: 'white'}}>Save Changes</Text>
+                    </TouchableOpacity>
+                    </View>
+                    <TouchableOpacity onPress={() => changeVis(!visible)}>
+                    <Text style={{backgroundColor: 'grey'}}>Go Back</Text>
+                    </TouchableOpacity>
                 </View>
             </Modal>
         </Animated.View>
@@ -114,15 +130,26 @@ const styles = StyleSheet.create({
     text:{
         fontSize: 15,
     },
+    input: {
+        height: 30,
+        width: '40%',
+        margin: 12,
+        borderWidth: 1,
+      },
     modal: {
         display: 'flex',
-        backgroundColor: 'green',
         height: '100%',
         width: '100%',
-        marginTop: '20%',
-        justifyContent: 'center',
         alignItems: 'center',
         padding: '20%',
+        justifyContent: 'space-between'
     },
+    modalContainer: {
+        flex:1,
+        justifyContent:'center',
+        alignItems:'center',
+        backgroundColor:'white',
+        width:'100%'
+    }
     }
 )
