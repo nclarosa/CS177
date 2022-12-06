@@ -1,40 +1,44 @@
 import { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, SafeAreaView, Image, TouchableOpacity, Modal, TextInput} from 'react-native';
+import {Slider} from '@miblanchard/react-native-slider';
 import Node from './nodes/nodes';
 import Legend from './legend';
+import { RadioButton } from 'react-native-paper';
+
 
 export default function App() {
 
     const [visible, setVis] = useState(false);
     const [frequency, changeFreq] = useState('');
     const [relationship, changeRel] = useState('');
+    const [checked, setChecked] = useState("Daily");
     const [name, changeName] = useState('');
-    const [vdist, changeV] = useState(50);
+    const [vdist, changeV] = useState(5);
     const [hdist, changeH] = useState(50);
     const [nodes, changeNodes] = useState(
     [
         {name: 'Me',
             id: 0,
-            left: 38,
             bottom: 10,
             rel: 'Main',
-            frequency: 'Weekly'
+            frequency: 'Weekly',
+            notes: ''
         },
         {
             id: 1,
             name: 'Dad',
-            left: 20,
-            bottom: 30,
+            bottom: 50,
             rel: 'Family',
-            frequency: 'Weekly'
+            frequency: 'Weekly',
+            notes: '',
         },
         {
             id: 2,
             name: 'James',
-            left: 40,
-            bottom: 60,
+            bottom: 100,
             rel: 'Friend',
-            frequency: 'Bi-weekly'
+            frequency: 'Daily',
+            notes: '',
         },
     ]);
 
@@ -46,10 +50,11 @@ export default function App() {
     },[nodes]);
 
     const [count, updateCount] = useState(3);
+      //<Image style={styles.image} source={{uri: "https://i.pinimg.com/564x/72/fc/8f/72fc8f99d2ecbb63647e83af43235b05--personal-progress-geometric-shapes.jpg"}}/>
 
   return (
   <SafeAreaView style={styles.container}>
-      <Image style={styles.image} source={{uri: "https://i.pinimg.com/564x/72/fc/8f/72fc8f99d2ecbb63647e83af43235b05--personal-progress-geometric-shapes.jpg"}}/>
+      <Image style={styles.image} source={require('./assets/background.png')}/>
       {nodes.map((node) => {
         return (
                 <Node offset={node} key={node.name}/>
@@ -78,26 +83,59 @@ export default function App() {
                 onChangeText={changeRel}
                 value={relationship}
             />
-            <TextInput 
-                style={styles.input}
-                placeholder="emotional closeness"
-                value={vdist}
-                onChangeText={changeV}
-            />
-            <TextInput 
-                style={styles.input}
-                placeholder="physical closeness"
-                value={hdist}
-                onChangeText={changeH}
-            />
-              <TextInput 
-                style={styles.input}
-                placeholder="reminder frequency"
-                onChangeText={changeFreq}
-                value={frequency}
-            />
+            <View style={styles.instructions}>
+                <View style={{alignItems:'center'}}>
+                    <Text>How close are you? </Text>
+                    <Text>(1 = very close, 10 = not very close)</Text>
+                </View>
+                <Slider
+                    value={vdist}
+                    minimumValue = {0}
+                    maximumValue = {10}
+                    onValueChange={(value) => changeV(value)}
+                    minimumTrackTintColor="#307ecc"
+                    maximumTrackTintColor="#000000"
+                    step={1}
+                    trackClickable= {true}
+                />
+                <Text style={{marginLeft:'47%'}}>{vdist}</Text>
+            </View> 
+                    <View style={styles.radios}>
+                        <Text> Reminder Frequency:</Text>
+                        <View style={styles.buttons}>
+                            <RadioButton
+                                value="Daily"
+                                status={ checked === "Daily" ? 'checked' : 'unchecked' }
+                                onPress={() => setChecked('Daily')}
+                            />
+                            <Text style={{marginTop:9}}>Daily</Text>
+                        </View>
+                        <View style={styles.buttons}>
+                            <RadioButton
+                                value="Weekly"
+                                status={ checked === "Weekly" ? 'checked' : 'unchecked' }
+                                onPress={() => setChecked('Weekly')}
+                            />
+                            <Text style={{marginTop:9}}>Weekly</Text>
+                        </View>
+                        <View style={styles.buttons}>
+                            <RadioButton
+                                value="Bi-weekly"
+                                status={ checked === "Bi-weekly" ? 'checked' : 'unchecked' }
+                                onPress={() => setChecked('Bi-weekly')}
+                            />
+                            <Text style={{marginTop:9}}>Bi-weekly</Text>
+                        </View>
+                        <View style={styles.buttons}>
+                            <RadioButton
+                                value="Monthly"
+                                status={ checked === "Monthly" ? 'checked' : 'unchecked' }
+                                onPress={() => setChecked('Monthly')}
+                            />
+                            <Text style={{marginTop:9}}>Monthly</Text>
+                        </View>
+                    </View>
           <TouchableOpacity onPress={()=>{
-                const radius = Math.sqrt(vdist**2 + hdist**2);
                 if(name === "Me"){
                     radius = 0;
                 }
@@ -105,10 +143,10 @@ export default function App() {
         {
             id: count,
             name: name,
-            left: hdist,
-            bottom: parseInt(vdist) + parseInt(radius),
+            bottom: parseInt(vdist) * 10,
             rel: relationship,
-            frequency: frequency
+            frequency: checked, 
+            notes: '',
         }]);
                 updateCount(count + 1);
                 changeH("");
@@ -117,7 +155,7 @@ export default function App() {
                 changeFreq("");
                 changeName("");
                 setVis(!visible)}}>
-                <Text>save</Text>
+                <Text style={{margin:10}}>save</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={()=>{
@@ -160,16 +198,30 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     alignItems:'center',
     backgroundColor:'white',
-    width:'100%'
+    width:'100%',
     },
     image: {
     width: 440,
-    height: 500,
+    height: '100%',
     position: 'absolute',
     },
     button: {
     position: 'absolute',
     bottom: '25%',
     right: '5%',
+    },
+    instructions:{
+        height: 50,
+        width:'60%',
+        justifyContent:'center',
+        margin: 40,
+    },
+    radios: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    buttons: {
+        display:'flex',
+        flexDirection:'row',
     }
 });

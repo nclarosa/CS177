@@ -17,7 +17,7 @@ const Legend = () => {
                 <Text>Friend</Text>
             </View>
             <View style={styles.row}>
-                <View style={[styles.circle,{backgroundColor:'blue'}]}></View>
+                <View style={[styles.circle,{backgroundColor:'orange'}]}></View>
                 <Text>Coworker</Text>
             </View>
             <View style={styles.row}>
@@ -32,11 +32,12 @@ export default Legend;
 
 const styles = StyleSheet.create({
     view: {
-        height: 155,
-        width: 100,
-        borderWidth: 2,
+        height: 195,
+        width: 120,
+        borderWidth: 1,
         borderColor: 'black',
         position: 'absolute',
+        padding: 5,
         right: 0,
         top: 50,
     },
@@ -52,6 +53,8 @@ const styles = StyleSheet.create({
         alignItems:'center',
         display:'flex',
         flexDirection:'row',
+        marginTop: 3,
+        marginBottom: 3,
     }
 });
 

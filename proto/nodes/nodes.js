@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Animated, View, Modal, StyleSheet, Text, TouchableOpacity, Easing, TextInput} from 'react-native';
+import { RadioButton } from 'react-native-paper';
+
 
 const Node = (props) => {
 
     const [visible, changeVis] = useState(false);
     const [frequency, changeDisplayedFreq] = useState(props.offset.frequency);
-    const left = props.offset.left;
+    const [checked, setChecked] = useState(props.offset.frequency);
+    const [notes, changeNotes] = useState(props.offset.notes);
     const bottom = props.offset.bottom;
     let color = 'cyan';
     switch (props.offset.rel){
@@ -16,7 +19,7 @@ const Node = (props) => {
         color = 'green';
         break;
     case 'Coworker':
-        color = 'blue';
+        color = 'orange';
         break;
     case 'Main':
         color = 'yellow';
@@ -26,7 +29,7 @@ const Node = (props) => {
     const styleOverride = {
         backgroundColor: color,
     }
-    
+
     const animation = new Animated.Value(0); 
 
     useEffect(() => {
@@ -35,7 +38,7 @@ const Node = (props) => {
         }
     },[animation]);
 
-    let radius = Math.sqrt(left**2 + bottom**2);
+    let radius = bottom*1.5;
     if(props.offset.id === 0){
         radius = 0;
     }
@@ -62,13 +65,11 @@ const Node = (props) => {
         let translateY = animation.interpolate({ inputRange, outputRange });
 
 
-
-
     const moving = () => {
         Animated.loop(
             Animated.timing(animation, {
                 toValue: 1,
-                duration: 8000 + Math.random() * 10000,
+                duration: 10000 + Math.random() * 10000,
                 useNativeDriver: false,
                 easing: Easing.linear,
             }),
@@ -84,29 +85,60 @@ const Node = (props) => {
                 </View>
             </TouchableOpacity>
             <Modal visible={visible} animationType='slide' transparent='true'>
-                <View style={[styles.modal, {backgroundColor: color}] }>
+                <View style={styles.modal}>
                     <Text> Orbit currently reminds you to reach out to {props.offset.name} {frequency}!</Text>
-                    <View>
-                    <Text> Type below to change the reminder frequency:</Text>
-                    <TextInput 
-                    style={styles.input}
-                    placeholder="daily, weekly, bi-weekly, or monthly"
-                    onChangeText={changeDisplayedFreq}
-                    value={frequency}
-                    />
-                    <TouchableOpacity onPress={() => props.offset.frequency = frequency}>
-                    <Text style={{backgroundColor: 'white'}}>Save Changes</Text>
-                    </TouchableOpacity>
+                    <View style={styles.radios}>
+                        <Text> Reminder Frequency:</Text>
+                        <View style={styles.buttons}>
+                            <RadioButton
+                                value="Daily"
+                                status={ checked === "Daily" ? 'checked' : 'unchecked' }
+                                onPress={() => setChecked('Daily')}
+                            />
+                            <Text style={{marginTop:9}}>Daily</Text>
+                        </View>
+                        <View style={styles.buttons}>
+                            <RadioButton
+                                value="Weekly"
+                                status={ checked === "Weekly" ? 'checked' : 'unchecked' }
+                                onPress={() => setChecked('Weekly')}
+                            />
+                            <Text style={{marginTop:9}}>Weekly</Text>
+                        </View>
+                        <View style={styles.buttons}>
+                            <RadioButton
+                                value="Bi-weekly"
+                                status={ checked === "Bi-weekly" ? 'checked' : 'unchecked' }
+                                onPress={() => setChecked('Bi-weekly')}
+                            />
+                            <Text style={{marginTop:9}}>Bi-weekly</Text>
+                        </View>
+                        <View style={styles.buttons}>
+                            <RadioButton
+                                value="Monthly"
+                                status={ checked === "Monthly" ? 'checked' : 'unchecked' }
+                                onPress={() => setChecked('Monthly')}
+                            />
+                            <Text style={{marginTop:9}}>Monthly</Text>
+                        </View>
+                    </View>
+                    <Text>Notes</Text>
+                    <View style={styles.notesInput}>
+                        <TextInput
+                        value={notes}
+                        onChangeText={changeNotes}
+                        multiline={true}
+                        style={{width:'100%'}}
+                        />
                     </View>
                     <TouchableOpacity onPress={() => changeVis(!visible)}>
-                    <Text style={{backgroundColor: 'grey'}}>Go Back</Text>
+                        <Text>Go Back</Text>
                     </TouchableOpacity>
                 </View>
             </Modal>
         </Animated.View>
     )
 }
-
 
 export default Node;
 
@@ -132,7 +164,7 @@ const styles = StyleSheet.create({
     },
     input: {
         height: 30,
-        width: '40%',
+        width: 150,
         margin: 12,
         borderWidth: 1,
       },
@@ -142,7 +174,7 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
         padding: '20%',
-        justifyContent: 'space-between'
+        justifyContent: 'space-evenly'
     },
     modalContainer: {
         flex:1,
@@ -150,6 +182,22 @@ const styles = StyleSheet.create({
         alignItems:'center',
         backgroundColor:'white',
         width:'100%'
-    }
+    },
+    radios: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    buttons: {
+        display:'flex',
+        flexDirection:'row',
+    },
+    notesInput:{
+        minHeight: 100,
+        width: '80%',
+        borderWidth: 2,
+        borderColor:'black',
+        fontSize: 20,
+        marginTop: -70,
+    },
     }
 )
